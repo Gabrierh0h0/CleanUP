@@ -21,11 +21,11 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`\n🚀 EIAR Monolito corriendo en: http://localhost:${port}`);
-  console.log(`📐 Arquitectura: Monolítica en Capas`);
-  console.log(`   Presentación  → src/presentation/`);
-  console.log(`   Aplicación    → src/application/`);
-  console.log(`   Dominio       → src/domain/`);
-  console.log(`   Infraestructura → src/infrastructure/\n`);
+  console.log(`📐 Arquitectura: Clean Architecture`);
+  console.log(`   Presentación  → src/adapters/`);
+  console.log(`   Aplicación    → src/usecases/`);
+  console.log(`   Dominio       → src/entities/`);
+  console.log(`   Infraestructura → src/frameworks/\n`);
 }
 
 bootstrap();

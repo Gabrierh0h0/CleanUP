@@ -8,7 +8,7 @@ import {
   IUserRepository,
   LOGRO_REPOSITORY,
   USER_REPOSITORY,
-} from '../../domain/interfaces/repositories.interface';
+} from '../../usecases/output/repositories.output';
 
 @Injectable()
 export class LogrosService {

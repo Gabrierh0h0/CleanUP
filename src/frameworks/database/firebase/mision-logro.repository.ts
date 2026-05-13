@@ -6,9 +6,9 @@ import { FirebaseService } from '../firebase/firebase.service';
 import {
   IMisionRepository,
   ILogroRepository,
-} from '../../domain/interfaces/repositories.interface';
-import { MisionModel } from '../../domain/models/mision.model';
-import { LogroModel } from '../../domain/models/logro.model';
+} from '../../../usecases/output/repositories.output';
+import { MisionModel } from '../../../entities/mision.model';
+import { LogroModel } from '../../../entities/logro.model';
 
 @Injectable()
 export class MisionRepository implements IMisionRepository {

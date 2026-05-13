@@ -3,9 +3,9 @@
  * Define contratos que la capa de infraestructura debe implementar.
  * El dominio no sabe nada de Firebase; solo conoce estos contratos.
  */
-import { UserModel } from '../models/user.model';
-import { MisionModel } from '../models/mision.model';
-import { LogroModel } from '../models/logro.model';
+import { UserModel } from '../../entities/user.model';
+import { MisionModel } from '../../entities/mision.model';
+import { LogroModel } from '../../entities/logro.model';
 
 export interface IUserRepository {
   findById(uid: string): Promise<UserModel | null>;

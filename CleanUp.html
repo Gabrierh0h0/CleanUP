@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clean Architecture</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --blue:#2563eb;
+      --blue2:#0ea5e9;
+      --green:#16a34a;
+      --orange:#f97316;
+      --red:#dc2626;
+      --purple:#7c3aed;
+      --card:#ffffff;
+      --soft:#eff6ff;
+      --soft2:#f8fafc;
+      --line:#bfdbfe;
+      --text:#0f172a;
+      --muted:#475569;
+      --dark:#111827;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#eaf2ff 0%, #f8fafc 100%);
+      color:var(--text);
+      line-height:1.45;
+    }
+    header{
+      background:linear-gradient(135deg,#0f172a,#1e3a8a);
+      color:white;
+      padding:38px 26px;
+    }
+    .container{max-width:1260px;margin:0 auto}
+    .hero{
+      display:grid;
+      grid-template-columns:1.25fr .9fr;
+      gap:28px;
+      align-items:center;
+    }
+    h1{font-size:2.45rem;margin:0 0 12px}
+    header p{color:#dbeafe;font-size:1.05rem;margin:0}
+    .hero-card{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 10px 32px rgba(0,0,0,.18);
+    }
+    .hero-card h3{margin:0 0 10px}
+    nav{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid #dbeafe;
+    }
+    .nav-inner{
+      max-width:1260px;
+      margin:0 auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      padding:12px 16px;
+    }
+    nav a{
+      text-decoration:none;
+      color:#0f172a;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:.9rem;
+      font-weight:600;
+    }
+    main{max-width:1260px;margin:28px auto;padding:0 18px}
+    section{
+      margin-bottom:34px;
+      background:rgba(255,255,255,.45);
+      border-radius:24px;
+      padding:4px 0;
+    }
+    .section-title{
+      font-size:1.72rem;
+      margin:0 0 16px;
+      color:#0f172a;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:18px;
+    }
+    .card{
+      background:white;
+      border:1px solid #dbeafe;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 8px 30px rgba(15,23,42,.06);
+      grid-column:span 12;
+    }
+    .half{grid-column:span 6}
+    .third{grid-column:span 4}
+    .quarter{grid-column:span 3}
+    .two-thirds{grid-column:span 8}
+    .badge{
+      display:inline-block;
+      background:#dbeafe;
+      color:#1d4ed8;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:.78rem;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .badge.green{background:#dcfce7;color:#166534}
+    .badge.orange{background:#ffedd5;color:#9a3412}
+    .badge.red{background:#fee2e2;color:#991b1b}
+    .badge.purple{background:#ede9fe;color:#5b21b6}
+    .diagram{
+      background:#0b1220;
+      color:white;
+      border-radius:20px;
+      padding:22px;
+      min-height:290px;
+    }
+    .stack{display:flex;flex-direction:column;gap:12px;max-width:500px;margin:0 auto}
+    .box{
+      background:linear-gradient(135deg,#1d4ed8,#0ea5e9);
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      font-weight:700;
+      box-shadow:0 7px 18px rgba(14,165,233,.24);
+    }
+    .box.green{background:linear-gradient(135deg,#15803d,#22c55e)}
+    .box.orange{background:linear-gradient(135deg,#c2410c,#fb923c)}
+    .box.gray{background:linear-gradient(135deg,#334155,#64748b)}
+    .box.purple{background:linear-gradient(135deg,#6d28d9,#a78bfa)}
+    .arrow{text-align:center;font-size:1.5rem;color:#93c5fd}
+    .flow{
+      display:grid;
+      grid-template-columns:repeat(9,1fr);
+      gap:8px;
+      align-items:center;
+      text-align:center;
+      font-weight:700;
+    }
+    .flow .step{
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:14px;
+      padding:14px 8px;
+      min-height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .flow .arr{font-size:1.35rem;color:#2563eb}
+    .code{
+      background:#0f172a;
+      color:#e2e8f0;
+      border-radius:14px;
+      padding:16px;
+      overflow:auto;
+      font-family:Consolas, Monaco, monospace;
+      font-size:.9rem;
+      white-space:pre-wrap;
+      margin:10px 0;
+    }
+    .layer{
+      border-left:6px solid #2563eb;
+      background:#f8fbff;
+      border-radius:14px;
+      padding:14px 16px;
+      margin-bottom:12px;
+    }
+    .layer h4{margin:0 0 6px}
+    ul{padding-left:22px}
+    .pros li::marker{color:#16a34a}
+    .cons li::marker{color:#dc2626}
+    table{width:100%;border-collapse:collapse;background:white}
+    th,td{border:1px solid #dbeafe;padding:12px;text-align:left;vertical-align:top}
+    th{background:#eff6ff;color:#1e3a8a}
+    .table-wrap{overflow:auto}
+    .slide-note{
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      border-left:6px solid #f97316;
+      padding:14px 16px;
+      border-radius:14px;
+      margin-top:12px;
+    }
+    .file-block{
+      border:1px solid #dbeafe;
+      background:#f8fafc;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:18px;
+    }
+    .file-block h3{margin:0 0 10px;color:#1e3a8a}
+    .adapter-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+    .adapter{
+      background:#1e293b;
+      color:#f8fafc;
+      border:1px solid #334155;
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      font-weight:800;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+      letter-spacing:.3px;
+    }
+    .adapter.in{background:#064e3b;color:#ecfdf5;border-color:#10b981}
+    .adapter.out{background:#7c2d12;color:#fff7ed;border-color:#fb923c}
+    .clean-circle{
+      width:330px;
+      height:330px;
+      margin:10px auto 18px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at center,#16a34a 0 25%,#f97316 26% 45%,#2563eb 46% 66%,#0f172a 67% 100%);
+      border:8px solid rgba(255,255,255,.3);
+      box-shadow:0 22px 55px rgba(15,23,42,.35);
+      text-align:center;
+      color:white;
+      font-weight:900;
+      padding:35px;
+    }
+    .meme{
+      background:#111827;
+      color:white;
+      border-radius:18px;
+      padding:18px;
+      border:1px solid #334155;
+      margin-top:18px;
+    }
+    .meme .face{font-size:3.1rem;line-height:1}
+    .footer{text-align:center;color:#64748b;padding:26px;font-size:.9rem}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .half,.third,.quarter,.two-thirds{grid-column:span 12}
+      .flow{grid-template-columns:1fr}
+      .flow .arr{transform:rotate(90deg)}
+      .adapter-grid{grid-template-columns:1fr}
+      .clean-circle{width:270px;height:270px}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container hero">
+    <div>
+      <h1>Clean Architecture</h1>
+      <p>
+        Gente, acá les explico Clean Architecture de una forma clara: es una arquitectura que organiza el software
+        para que las reglas importantes del negocio queden protegidas de frameworks, bases de datos, interfaces gráficas,
+        APIs externas y demás detalles técnicos.
+      </p>
+    </div>
+    <div class="hero-card">
+      <h3>Concepto clave 🧠</h3>
+      <p>
+        Clean Architecture busca que el corazón del sistema no dependa de lo externo.
+        El negocio debe poder entenderse, probarse y mantenerse sin estar amarrado a Spring, React, SQL,
+        MongoDB, HTTP o cualquier tecnología que mañana puede cambiar.
+      </p>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#concepto">Concepto</a>
+    <a href="#problema">Problema</a>
+    <a href="#diagrama">Diagrama</a>
+    <a href="#capas">Capas</a>
+    <a href="#regla">Regla dependencia</a>
+    <a href="#flujo">Flujo</a>
+    <a href="#git">Git</a>
+    <a href="#ejemplo1">Ejemplo 1</a>
+    <a href="#ejemplo2">Ejemplo 2</a><a href="#ejemplo3">Ejemplo 3</a><a href="#testing">Testing</a><a href="#comparacion">Comparación</a>
+  </div>
+</nav>
+
+<main>
+
+<section id="concepto">
+  <h2 class="section-title">1. ¿Qué es Clean Architecture?</h2>
+  <div class="grid">
+    <div class="card two-thirds">
+      <span class="badge">Definición</span>
+      <p>
+        Clean Architecture es una forma de organizar el código separando las reglas de negocio,
+        los casos de uso y los detalles técnicos. La idea es que lo más importante del sistema
+        quede en el centro, y lo externo quede en las capas de afuera.
+      </p>
+      <p>
+        El principio: <strong>las dependencias deben apuntar hacia adentro</strong>. Es decir,
+        las capas externas pueden conocer las internas, pero las internas no deberían depender de las externas.
+      </p>
+      <ul>
+        <li>Las entidades representan reglas centrales del negocio.</li>
+        <li>Los casos de uso coordinan acciones de la aplicación.</li>
+        <li>Los controladores y bases de datos son detalles externos.</li>
+        <li>El dominio no debería saber qué framework se usa.</li>
+        <li>El sistema queda más fácil de probar, mantener y cambiar.</li>
+      </ul>
+    </div>
+    <div class="card half diagram">
+      <span class="badge" style="background:#1e40af;color:white;">Vista conceptual</span>
+      <div class="clean-circle">
+        ENTITIES<br/>
+        <small>Use Cases → Interfaces → Frameworks</small>
+      </div>
+      <div class="adapter-grid">
+        <div class="adapter in">Controllers</div>
+        <div class="adapter in">Presenters</div>
+        <div class="adapter in">Tests</div>
+        <div class="adapter out">Database</div>
+        <div class="adapter out">External API</div>
+        <div class="adapter out">Framework</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problema">
+  <h2 class="section-title">2. ¿Qué problema resuelve?</h2>
+  <div class="grid">
+    <div class="card half">
+      <span class="badge red">Problema típico</span>
+      <p>
+        Cuando el negocio queda mezclado con controladores, SQL, frameworks o librerías externas,
+        cambiar cualquier cosa se vuelve una vuelta pesada. Eso pasa cuando el código queda organizado
+        por tecnología, pero no por responsabilidad real.
+      </p>
+      <ul class="cons">
+        <li>Las reglas de negocio terminan en controllers.</li>
+        <li>Los casos de uso quedan pegados a la base de datos.</li>
+        <li>Probar una regla requiere levantar toda la aplicación.</li>
+        <li>Cambiar framework o persistencia rompe más de lo necesario.</li>
+        <li>El código crece y nadie sabe dónde vive cada decisión importante.</li>
+      </ul>
+    </div>
+    <div class="card half">
+      <span class="badge green">Solución Clean</span>
+      <p>
+        Vea pues: Clean Architecture separa el sistema por capas de responsabilidad.
+        El negocio queda al centro, los casos de uso lo rodean y los detalles técnicos quedan por fuera.
+      </p>
+      <ul class="pros">
+        <li>Reglas de negocio protegidas.</li>
+        <li>Casos de uso claros y probables.</li>
+        <li>Infraestructura reemplazable.</li>
+        <li>Menor acoplamiento con frameworks.</li>
+        <li>Mayor claridad para equipos grandes.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-note">
+    <strong>Idea clave:</strong> Clean Architecture no es llenar el proyecto de carpetas. Es separar responsabilidades para que el negocio no quede secuestrado por la tecnología.
+  </div>
+</section>
+
+<section id="diagrama">
+  <h2 class="section-title">3. Diagrama profesional: capas hacia el centro</h2>
+  <div class="card">
+    <span class="badge">Flujo de dependencia</span>
+    <div class="flow">
+      <div class="step">Frameworks</div>
+      <div class="arr">→</div>
+      <div class="step">Controllers / DB</div>
+      <div class="arr">→</div>
+      <div class="step">Interface Adapters</div>
+      <div class="arr">→</div>
+      <div class="step">Use Cases</div>
+      <div class="arr">→</div>
+      <div class="step">Entities</div>
+    </div>
+    <br/>
+    <div class="flow">
+      <div class="step">HTTP / UI</div>
+      <div class="arr">→</div>
+      <div class="step">Controller</div>
+      <div class="arr">→</div>
+      <div class="step">Input Port</div>
+      <div class="arr">→</div>
+      <div class="step">Interactor</div>
+      <div class="arr">→</div>
+      <div class="step">Entity</div>
+    </div>
+  </div>
+  <div class="slide-note">
+    <strong>Vea pues:</strong> lo externo puede llamar hacia adentro, pero el centro no debería depender de lo externo.
+  </div>
+</section>
+
+<section id="capas">
+  <h2 class="section-title">4. Capas principales de Clean Architecture</h2>
+  <div class="grid">
+    <div class="card quarter">
+      <span class="badge green">Entities</span>
+      <p>
+        Son las reglas más importantes del negocio. No deberían depender de frameworks,
+        bases de datos ni interfaces externas.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge orange">Use Cases</span>
+      <p>
+        Representan lo que la aplicación puede hacer: crear tarea, registrar usuario,
+        aprobar crédito o generar factura.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge purple">Interface Adapters</span>
+      <p>
+        Adaptan datos entre el mundo externo y los casos de uso: controllers, presenters,
+        gateways y mappers.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge red">Frameworks & Drivers</span>
+      <p>
+        Son detalles técnicos: Spring, Express, base de datos, UI, APIs externas,
+        archivos o servicios cloud.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="regla">
+  <h2 class="section-title">5. Regla de dependencia</h2>
+  <div class="grid">
+    <div class="card half">
+      <span class="badge">La regla</span>
+      <p>
+        Gente, esta es la regla más importante: <strong>las dependencias del código apuntan hacia el centro</strong>.
+        Lo de afuera puede conocer lo de adentro, pero lo de adentro no debe depender de lo de afuera.
+      </p>
+      <ul>
+        <li>La entidad no conoce el controller.</li>
+        <li>El caso de uso no conoce la base de datos concreta.</li>
+        <li>El dominio no depende del framework.</li>
+        <li>La infraestructura implementa contratos definidos hacia adentro.</li>
+      </ul>
+    </div>
+    <div class="card half">
+      <span class="badge orange">Ejemplo mental</span>
+      <p>
+        Parce, si para cambiar de MySQL a MongoDB hay que tocar la regla de negocio,
+        el diseño está demasiado acoplado. La entidad debería seguir igual,
+        porque guardar datos es un detalle externo.
+      </p>
+      <div class="code">Entities
+↑
+Use Cases
+↑
+Interface Adapters
+↑
+Frameworks & Drivers</div>
+    </div>
+  </div>
+</section>
+
+<section id="flujo">
+  <h2 class="section-title">6. Flujo general de una petición</h2>
+  <div class="card">
+    <span class="badge">Flujo completo</span>
+    <div class="flow">
+      <div class="step">Cliente</div>
+      <div class="arr">→</div>
+      <div class="step">Controller</div>
+      <div class="arr">→</div>
+      <div class="step">Input DTO</div>
+      <div class="arr">→</div>
+      <div class="step">Use Case</div>
+      <div class="arr">→</div>
+      <div class="step">Entity</div>
+    </div>
+    <br/>
+    <div class="flow">
+      <div class="step">Entity</div>
+      <div class="arr">→</div>
+      <div class="step">Repository Port</div>
+      <div class="arr">→</div>
+      <div class="step">Repository Adapter</div>
+      <div class="arr">→</div>
+      <div class="step">Database</div>
+      <div class="arr">→</div>
+      <div class="step">Presenter</div>
+    </div>
+  </div>
+  <div class="slide-note">
+    <strong>Acá está la vuelta:</strong> el controller no contiene la regla importante.
+    El caso de uso coordina y la entidad protege las decisiones centrales del negocio.
+  </div>
+</section>
+
+<section id="git">
+  <h2 class="section-title">7. Organización Git base para Clean Architecture</h2>
+  <div class="grid">
+    <div class="card half">
+      <span class="badge">Estructura base</span>
+      <p>
+        Parce, vea es que en Git también se debe notar la arquitectura. Si todo queda mezclado,
+        después nadie sabe qué es negocio, qué es caso de uso y qué es infraestructura.
+      </p>
+      <div class="code">clean-architecture-app/
+├── src/
+│   └── main/
+│       └── java/
+│           └── com/universidad/app/
+│               ├── entities/
+│               ├── usecases/
+│               │   ├── input/
+│               │   ├── output/
+│               │   └── interactor/
+│               ├── adapters/
+│               │   ├── controllers/
+│               │   ├── presenters/
+│               │   └── gateways/
+│               └── frameworks/
+│                   ├── database/
+│                   └── web/
+├── tests/
+└── README.md</div>
+    </div>
+    <div class="card half">
+      <span class="badge orange">Comandos sugeridos</span>
+      <div class="code">git checkout develop
+git checkout -b feature/clean-task-usecase
+
+git add src/main/java/com/universidad/app/entities
+git add src/main/java/com/universidad/app/usecases
+git add src/main/java/com/universidad/app/adapters
+
+git commit -m "feat: implementar caso de uso de tareas con clean architecture"
+git push origin feature/clean-task-usecase</div>
+      <p>
+        La idea es que el commit deje claro qué parte de la arquitectura cambió:
+        entidad, caso de uso, adaptador o infraestructura.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="ejemplo1">
+  <h2 class="section-title">8. Ejemplo 1: Gestión de tareas personales</h2>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge green">Caso</span>
+      <p>
+        Gente, vamos con un caso muy entendible: una aplicación para crear tareas personales.
+        El usuario escribe el título y la descripción de una tarea. El sistema valida que el título no esté vacío,
+        crea la tarea y la guarda.
+      </p>
+      <p>
+        La gracia no es la complejidad del ejemplo, sino ver cómo Clean Architecture separa:
+        entidad, caso de uso, controller, repositorio e infraestructura.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge">Flujo del ejemplo</span>
+    <div class="flow">
+      <div class="step">Usuario</div>
+      <div class="arr">→</div>
+      <div class="step">TaskController</div>
+      <div class="arr">→</div>
+      <div class="step">CreateTaskInput</div>
+      <div class="arr">→</div>
+      <div class="step">CreateTaskInteractor</div>
+      <div class="arr">→</div>
+      <div class="step">Task</div>
+    </div>
+    <br/>
+    <div class="flow">
+      <div class="step">Task</div>
+      <div class="arr">→</div>
+      <div class="step">TaskRepositoryOutput</div>
+      <div class="arr">→</div>
+      <div class="step">TaskRepositoryGateway</div>
+      <div class="arr">→</div>
+      <div class="step">Database</div>
+      <div class="arr">→</div>
+      <div class="step">TaskPresenter</div>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>Representación jerárquica en Git - Ejemplo 1</h3>
+    <p>
+      Parce, vea pues cómo quedaría organizado este ejemplo. Cada archivo queda en la capa que corresponde,
+      para que no terminemos metiendo lógica de negocio en el controller.
+    </p>
+    <div class="code">task-clean-app/
+└── src/main/java/com/universidad/tasks/
+    ├── entities/
+    │   └── Task.java
+    ├── usecases/
+    │   ├── input/
+    │   │   └── CreateTaskInput.java
+    │   ├── output/
+    │   │   └── TaskRepositoryOutput.java
+    │   └── interactor/
+    │       └── CreateTaskInteractor.java
+    ├── adapters/
+    │   ├── controllers/
+    │   │   └── TaskController.java
+    │   └── presenters/
+    │       └── TaskPresenter.java
+    └── frameworks/
+        └── database/
+            └── TaskRepositoryGateway.java</div>
+  </div>
+
+  <div class="file-block">
+    <h3>¿Qué hace cada archivo .java en este ejemplo?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th>¿Para qué sirve?</th>
+            <th>¿Con qué se conecta?</th>
+            <th>Ubicación en la arquitectura</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Task.java</strong></td>
+            <td>Representa la tarea y valida reglas centrales como título obligatorio.</td>
+            <td>Lo crea <strong>CreateTaskInteractor</strong>.</td>
+            <td><strong>Entities</strong>. Capa más interna, donde vive la regla del negocio.</td>
+          </tr>
+          <tr>
+            <td><strong>CreateTaskInput.java</strong></td>
+            <td>Define la entrada del caso de uso para crear tareas.</td>
+            <td>Lo implementa <strong>CreateTaskInteractor</strong> y lo llama <strong>TaskController</strong>.</td>
+            <td><strong>Use Cases / Input</strong>. Contrato de entrada del caso de uso.</td>
+          </tr>
+          <tr>
+            <td><strong>TaskRepositoryOutput.java</strong></td>
+            <td>Define que el caso de uso necesita guardar tareas, sin saber cómo.</td>
+            <td>Lo usa <strong>CreateTaskInteractor</strong> y lo implementa <strong>TaskRepositoryGateway</strong>.</td>
+            <td><strong>Use Cases / Output</strong>. Puerto de salida hacia persistencia.</td>
+          </tr>
+          <tr>
+            <td><strong>CreateTaskInteractor.java</strong></td>
+            <td>Coordina el caso de uso: recibe datos, crea la entidad y solicita guardado.</td>
+            <td>Implementa <strong>CreateTaskInput</strong> y usa <strong>TaskRepositoryOutput</strong>.</td>
+            <td><strong>Use Cases / Interactor</strong>. Contiene el flujo de aplicación.</td>
+          </tr>
+          <tr>
+            <td><strong>TaskController.java</strong></td>
+            <td>Recibe la petición externa y la convierte al formato del caso de uso.</td>
+            <td>Llama a <strong>CreateTaskInput</strong>.</td>
+            <td><strong>Adapters / Controllers</strong>. Adaptador de entrada.</td>
+          </tr>
+          <tr>
+            <td><strong>TaskPresenter.java</strong></td>
+            <td>Organiza la respuesta que se entrega al usuario o API.</td>
+            <td>Recibe datos del caso de uso o controller para dar formato de salida.</td>
+            <td><strong>Adapters / Presenters</strong>. Adaptador de salida hacia respuesta.</td>
+          </tr>
+          <tr>
+            <td><strong>TaskRepositoryGateway.java</strong></td>
+            <td>Implementa el guardado real en base de datos.</td>
+            <td>Implementa <strong>TaskRepositoryOutput</strong>.</td>
+            <td><strong>Frameworks / Database</strong>. Detalle externo de persistencia.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>Task.java</h3>
+    <p>
+      En este pedazo de código podemos ver la entidad. La tarea se protege a sí misma:
+      no permite título vacío y define su estado inicial.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Entities</strong>, ubicado en <strong>entities</strong>. Esta capa guarda reglas centrales del negocio y no depende de frameworks.</p>
+    <div class="code">public class Task {
+
+    private final String title;
+    private final String description;
+    private final String status;
+
+    private Task(String title, String description) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("El título de la tarea es obligatorio");
+        }
+
+        this.title = title;
+        this.description = description;
+        this.status = "PENDING";
+    }
+
+    public static Task create(String title, String description) {
+        return new Task(title, description);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>CreateTaskInput.java</h3>
+    <p>
+      Este archivo define lo que la aplicación puede hacer: crear una tarea.
+      El controller llama este contrato sin conocer directamente la implementación.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Input</strong>, ubicado en <strong>usecases/input</strong>. Representa el contrato de entrada del caso de uso.</p>
+    <div class="code">public interface CreateTaskInput {
+
+    TaskResponse createTask(CreateTaskRequest request);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>TaskRepositoryOutput.java</h3>
+    <p>
+      Este archivo define lo que el caso de uso necesita del mundo exterior: guardar una tarea.
+      No dice si se guarda con JPA, MongoDB, archivo o memoria.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Output</strong>, ubicado en <strong>usecases/output</strong>. Define una salida requerida por el caso de uso.</p>
+    <div class="code">public interface TaskRepositoryOutput {
+
+    Task save(Task task);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>CreateTaskInteractor.java</h3>
+    <p>
+      Este es el caso de uso. Recibe la solicitud, crea la entidad y manda guardar usando el contrato de salida.
+      No sabe qué base de datos hay detrás, y eso está muy bien.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Interactor</strong>, ubicado en <strong>usecases/interactor</strong>. Coordina entidades y salidas sin depender de infraestructura concreta.</p>
+    <div class="code">public class CreateTaskInteractor implements CreateTaskInput {
+
+    private final TaskRepositoryOutput taskRepositoryOutput;
+
+    public CreateTaskInteractor(TaskRepositoryOutput taskRepositoryOutput) {
+        this.taskRepositoryOutput = taskRepositoryOutput;
+    }
+
+    @Override
+    public TaskResponse createTask(CreateTaskRequest request) {
+        Task task = Task.create(request.title(), request.description());
+
+        Task savedTask = taskRepositoryOutput.save(task);
+
+        return new TaskResponse(
+            savedTask.getTitle(),
+            savedTask.getDescription(),
+            savedTask.getStatus()
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>TaskController.java</h3>
+    <p>
+      Este archivo recibe la petición externa. Gente, el controller no se pone a validar toda la lógica;
+      traduce la entrada y llama el caso de uso.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Controllers</strong>, ubicado en <strong>adapters/controllers</strong>. Es un adaptador de entrada entre HTTP/UI y el caso de uso.</p>
+    <div class="code">@RestController
+@RequestMapping("/tasks")
+public class TaskController {
+
+    private final CreateTaskInput createTaskInput;
+
+    public TaskController(CreateTaskInput createTaskInput) {
+        this.createTaskInput = createTaskInput;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;TaskResponse&gt; create(@RequestBody CreateTaskRequest request) {
+        TaskResponse response = createTaskInput.createTask(request);
+
+        return ResponseEntity.ok(response);
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>TaskPresenter.java</h3>
+    <p>
+      Este archivo ayuda a ordenar la respuesta para que la salida sea clara y consistente.
+      Parce, una cosa es la entidad del negocio y otra la forma como se le responde al usuario.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Presenters</strong>, ubicado en <strong>adapters/presenters</strong>. Adapta datos de salida para presentación.</p>
+    <div class="code">public class TaskPresenter {
+
+    public TaskViewModel present(TaskResponse response) {
+        return new TaskViewModel(
+            response.title(),
+            response.description(),
+            "Estado actual: " + response.status()
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>TaskRepositoryGateway.java</h3>
+    <p>
+      Este archivo implementa el guardado real. Está por fuera del centro porque la base de datos
+      es un detalle técnico, no la regla principal del negocio.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Frameworks / Database</strong>, ubicado en <strong>frameworks/database</strong>. Implementa persistencia concreta.</p>
+    <div class="code">public class TaskRepositoryGateway implements TaskRepositoryOutput {
+
+    private final JpaTaskRepository jpaTaskRepository;
+
+    public TaskRepositoryGateway(JpaTaskRepository jpaTaskRepository) {
+        this.jpaTaskRepository = jpaTaskRepository;
+    }
+
+    @Override
+    public Task save(Task task) {
+        TaskEntity entity = new TaskEntity(
+            task.getTitle(),
+            task.getDescription(),
+            task.getStatus()
+        );
+
+        jpaTaskRepository.save(entity);
+
+        return task;
+    }
+}</div>
+  </div>
+
+  <div class="slide-note">
+    <strong>Idea clave del ejemplo:</strong> la entidad protege la regla, el caso de uso coordina,
+    el controller adapta la entrada y el gateway se encarga de la base de datos.
+  </div>
+</section>
+
+<section id="ejemplo2">
+  <h2 class="section-title">9. Ejemplo 2: Registro de usuarios con validación</h2>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge orange">Caso</span>
+      <p>
+        Gente, ahora vamos con un caso más común en aplicaciones reales: registrar usuarios.
+        El sistema recibe nombre, correo y contraseña; valida que el correo tenga formato correcto,
+        que la contraseña tenga una longitud mínima y que el usuario no exista previamente.
+      </p>
+      <p>
+        Acá Clean Architecture ayuda bastante porque separa la validación del negocio,
+        el caso de uso, la persistencia y la forma como entra la petición. No metemos todo en el controller,
+        porque después eso queda como cajón de cables.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge">Flujo del ejemplo</span>
+    <div class="flow">
+      <div class="step">Cliente</div>
+      <div class="arr">→</div>
+      <div class="step">UserController</div>
+      <div class="arr">→</div>
+      <div class="step">RegisterUserInput</div>
+      <div class="arr">→</div>
+      <div class="step">RegisterUserInteractor</div>
+      <div class="arr">→</div>
+      <div class="step">User</div>
+    </div>
+    <br/>
+    <div class="flow">
+      <div class="step">User</div>
+      <div class="arr">→</div>
+      <div class="step">UserRepositoryOutput</div>
+      <div class="arr">→</div>
+      <div class="step">UserRepositoryGateway</div>
+      <div class="arr">→</div>
+      <div class="step">Database</div>
+      <div class="arr">→</div>
+      <div class="step">UserPresenter</div>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>Representación jerárquica en Git - Ejemplo 2</h3>
+    <p>
+      Parce, vea pues cómo se organiza este ejemplo. La entidad vive en el centro,
+      el caso de uso coordina, y la base de datos queda como detalle externo.
+    </p>
+    <div class="code">user-registration-clean-app/
+└── src/main/java/com/universidad/users/
+    ├── entities/
+    │   └── User.java
+    ├── usecases/
+    │   ├── input/
+    │   │   └── RegisterUserInput.java
+    │   ├── output/
+    │   │   └── UserRepositoryOutput.java
+    │   └── interactor/
+    │       └── RegisterUserInteractor.java
+    ├── adapters/
+    │   ├── controllers/
+    │   │   └── UserController.java
+    │   └── presenters/
+    │       └── UserPresenter.java
+    └── frameworks/
+        └── database/
+            └── UserRepositoryGateway.java</div>
+  </div>
+
+  <div class="file-block">
+    <h3>¿Qué hace cada archivo .java en este ejemplo?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th>¿Para qué sirve?</th>
+            <th>¿Con qué se conecta?</th>
+            <th>Ubicación en la arquitectura</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>User.java</strong></td>
+            <td>Representa el usuario y valida reglas centrales como nombre, correo y contraseña.</td>
+            <td>Lo crea <strong>RegisterUserInteractor</strong> después de validar que no exista.</td>
+            <td><strong>Entities</strong>. Capa interna con reglas de negocio.</td>
+          </tr>
+          <tr>
+            <td><strong>RegisterUserInput.java</strong></td>
+            <td>Define la acción que la aplicación permite: registrar un usuario.</td>
+            <td>Lo llama <strong>UserController</strong> y lo implementa <strong>RegisterUserInteractor</strong>.</td>
+            <td><strong>Use Cases / Input</strong>. Contrato de entrada del caso de uso.</td>
+          </tr>
+          <tr>
+            <td><strong>UserRepositoryOutput.java</strong></td>
+            <td>Define lo que el caso de uso necesita de persistencia: consultar y guardar usuarios.</td>
+            <td>Lo usa <strong>RegisterUserInteractor</strong> y lo implementa <strong>UserRepositoryGateway</strong>.</td>
+            <td><strong>Use Cases / Output</strong>. Puerto de salida hacia persistencia.</td>
+          </tr>
+          <tr>
+            <td><strong>RegisterUserInteractor.java</strong></td>
+            <td>Coordina el registro: valida existencia, crea el usuario y lo guarda.</td>
+            <td>Implementa <strong>RegisterUserInput</strong> y usa <strong>UserRepositoryOutput</strong>.</td>
+            <td><strong>Use Cases / Interactor</strong>. Contiene el flujo de aplicación.</td>
+          </tr>
+          <tr>
+            <td><strong>UserController.java</strong></td>
+            <td>Recibe la petición externa para registrar usuarios.</td>
+            <td>Llama a <strong>RegisterUserInput</strong>.</td>
+            <td><strong>Adapters / Controllers</strong>. Adaptador de entrada.</td>
+          </tr>
+          <tr>
+            <td><strong>UserPresenter.java</strong></td>
+            <td>Da formato a la respuesta para que no se exponga información sensible.</td>
+            <td>Recibe el resultado del caso de uso y prepara la respuesta final.</td>
+            <td><strong>Adapters / Presenters</strong>. Adaptador de salida hacia presentación.</td>
+          </tr>
+          <tr>
+            <td><strong>UserRepositoryGateway.java</strong></td>
+            <td>Implementa la consulta y guardado real del usuario en base de datos.</td>
+            <td>Implementa <strong>UserRepositoryOutput</strong>.</td>
+            <td><strong>Frameworks / Database</strong>. Detalle técnico externo.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>User.java</h3>
+    <p>
+      En este pedazo de código podemos ver la entidad de usuario. Esta clase valida reglas mínimas
+      antes de permitir que un usuario exista dentro del sistema.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Entities</strong>, ubicado en <strong>entities</strong>. Esta capa guarda reglas centrales del negocio y no depende de frameworks.</p>
+    <div class="code">public class User {
+
+    private final String name;
+    private final String email;
+    private final String password;
+
+    private User(String name, String email, String password) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("El correo no es válido");
+        }
+
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener mínimo 8 caracteres");
+        }
+
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public static User register(String name, String email, String password) {
+        return new User(name, email, password);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>RegisterUserInput.java</h3>
+    <p>
+      Este archivo define el contrato de entrada. Es decir, lo que la aplicación permite hacer:
+      registrar un usuario.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Input</strong>, ubicado en <strong>usecases/input</strong>. Representa el contrato que usa el adaptador de entrada para llamar el caso de uso.</p>
+    <div class="code">public interface RegisterUserInput {
+
+    UserResponse registerUser(RegisterUserRequest request);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>UserRepositoryOutput.java</h3>
+    <p>
+      Este archivo define la salida hacia persistencia. El caso de uso necesita saber si un correo ya existe
+      y también necesita guardar el usuario, pero no debe conocer la base de datos concreta.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Output</strong>, ubicado en <strong>usecases/output</strong>. Define dependencias externas que el caso de uso necesita usar.</p>
+    <div class="code">public interface UserRepositoryOutput {
+
+    boolean existsByEmail(String email);
+
+    User save(User user);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>RegisterUserInteractor.java</h3>
+    <p>
+      Este es el caso de uso. Valida si el correo ya existe, crea la entidad usuario
+      y delega el guardado al contrato de salida.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Interactor</strong>, ubicado en <strong>usecases/interactor</strong>. Coordina reglas del dominio y puertos de salida sin depender de infraestructura concreta.</p>
+    <div class="code">public class RegisterUserInteractor implements RegisterUserInput {
+
+    private final UserRepositoryOutput userRepositoryOutput;
+
+    public RegisterUserInteractor(UserRepositoryOutput userRepositoryOutput) {
+        this.userRepositoryOutput = userRepositoryOutput;
+    }
+
+    @Override
+    public UserResponse registerUser(RegisterUserRequest request) {
+        if (userRepositoryOutput.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        }
+
+        User user = User.register(
+            request.name(),
+            request.email(),
+            request.password()
+        );
+
+        User savedUser = userRepositoryOutput.save(user);
+
+        return new UserResponse(
+            savedUser.getName(),
+            savedUser.getEmail(),
+            "USER_REGISTERED"
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>UserController.java</h3>
+    <p>
+      Este archivo recibe la petición HTTP. Gente, el controller no guarda usuarios directamente
+      ni valida toda la regla de negocio. Traduce la entrada y llama el caso de uso.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Controllers</strong>, ubicado en <strong>adapters/controllers</strong>. Es un adaptador de entrada entre HTTP/UI y el caso de uso.</p>
+    <div class="code">@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final RegisterUserInput registerUserInput;
+
+    public UserController(RegisterUserInput registerUserInput) {
+        this.registerUserInput = registerUserInput;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;UserResponse&gt; register(@RequestBody RegisterUserRequest request) {
+        UserResponse response = registerUserInput.registerUser(request);
+
+        return ResponseEntity.ok(response);
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>UserPresenter.java</h3>
+    <p>
+      Este archivo prepara la respuesta que se entrega al usuario. Es importante porque no deberíamos
+      devolver datos sensibles como la contraseña.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Presenters</strong>, ubicado en <strong>adapters/presenters</strong>. Adapta el resultado del caso de uso a una respuesta segura y entendible.</p>
+    <div class="code">public class UserPresenter {
+
+    public UserViewModel present(UserResponse response) {
+        return new UserViewModel(
+            response.name(),
+            response.email(),
+            "Usuario registrado correctamente"
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>UserRepositoryGateway.java</h3>
+    <p>
+      Este archivo implementa la persistencia real. Está en la capa externa porque usar JPA,
+      SQL o cualquier motor de base de datos es un detalle técnico.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Frameworks / Database</strong>, ubicado en <strong>frameworks/database</strong>. Implementa la persistencia concreta definida por el puerto de salida.</p>
+    <div class="code">public class UserRepositoryGateway implements UserRepositoryOutput {
+
+    private final JpaUserRepository jpaUserRepository;
+
+    public UserRepositoryGateway(JpaUserRepository jpaUserRepository) {
+        this.jpaUserRepository = jpaUserRepository;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public User save(User user) {
+        UserEntity entity = new UserEntity(
+            user.getName(),
+            user.getEmail()
+        );
+
+        jpaUserRepository.save(entity);
+
+        return user;
+    }
+}</div>
+  </div>
+
+  <div class="slide-note">
+    <strong>Idea clave del ejemplo:</strong> registrar un usuario no es solo guardar datos.
+    Hay reglas de negocio, validaciones, persistencia y respuesta segura. Clean Architecture ayuda a que cada cosa quede en su sitio.
+  </div>
+</section>
+
+
+
+<section id="ejemplo3">
+  <h2 class="section-title">10. Ejemplo 3: Aprobación de crédito o préstamo</h2>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge purple">Caso</span>
+      <p>
+        Gente, ahora sí nos metemos en un caso más de industria: una entidad financiera recibe una solicitud
+        de préstamo. El sistema debe validar ingresos, monto solicitado, nivel de riesgo, capacidad de pago
+        y finalmente aprobar o rechazar la solicitud.
+      </p>
+      <p>
+        Clean Architecture ayuda mucho acá porque las reglas de aprobación no deberían vivir en el controller
+        ni en la base de datos. Esas reglas son negocio puro y deben quedar protegidas.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge">Flujo del ejemplo</span>
+    <div class="flow">
+      <div class="step">Cliente</div>
+      <div class="arr">→</div>
+      <div class="step">LoanController</div>
+      <div class="arr">→</div>
+      <div class="step">EvaluateLoanInput</div>
+      <div class="arr">→</div>
+      <div class="step">EvaluateLoanInteractor</div>
+      <div class="arr">→</div>
+      <div class="step">LoanApplication</div>
+    </div>
+    <br/>
+    <div class="flow">
+      <div class="step">LoanApplication</div>
+      <div class="arr">→</div>
+      <div class="step">RiskScoreOutput</div>
+      <div class="arr">→</div>
+      <div class="step">RiskScoreGateway</div>
+      <div class="arr">→</div>
+      <div class="step">LoanRepositoryGateway</div>
+      <div class="arr">→</div>
+      <div class="step">LoanPresenter</div>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>Representación jerárquica en Git - Ejemplo 3</h3>
+    <p>
+      Parce, vea pues cómo queda ordenado este ejemplo. Las reglas de préstamo viven en la entidad,
+      el caso de uso coordina, y los servicios externos como score de riesgo quedan por fuera.
+    </p>
+    <div class="code">loan-approval-clean-app/
+└── src/main/java/com/universidad/loans/
+    ├── entities/
+    │   └── LoanApplication.java
+    ├── usecases/
+    │   ├── input/
+    │   │   └── EvaluateLoanInput.java
+    │   ├── output/
+    │   │   ├── LoanRepositoryOutput.java
+    │   │   └── RiskScoreOutput.java
+    │   └── interactor/
+    │       └── EvaluateLoanInteractor.java
+    ├── adapters/
+    │   ├── controllers/
+    │   │   └── LoanController.java
+    │   └── presenters/
+    │       └── LoanPresenter.java
+    └── frameworks/
+        ├── database/
+        │   └── LoanRepositoryGateway.java
+        └── external/
+            └── RiskScoreGateway.java</div>
+  </div>
+
+  <div class="file-block">
+    <h3>¿Qué hace cada archivo .java en este ejemplo?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th>¿Para qué sirve?</th>
+            <th>¿Con qué se conecta?</th>
+            <th>Ubicación en la arquitectura</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>LoanApplication.java</strong></td>
+            <td>Representa la solicitud de préstamo y contiene reglas como capacidad de pago, monto máximo y decisión final.</td>
+            <td>Lo usa <strong>EvaluateLoanInteractor</strong> para tomar la decisión de aprobación o rechazo.</td>
+            <td><strong>Entities</strong>. Capa más interna con reglas críticas del negocio.</td>
+          </tr>
+          <tr>
+            <td><strong>EvaluateLoanInput.java</strong></td>
+            <td>Define la operación que la aplicación permite: evaluar una solicitud de préstamo.</td>
+            <td>Lo llama <strong>LoanController</strong> y lo implementa <strong>EvaluateLoanInteractor</strong>.</td>
+            <td><strong>Use Cases / Input</strong>. Contrato de entrada del caso de uso.</td>
+          </tr>
+          <tr>
+            <td><strong>LoanRepositoryOutput.java</strong></td>
+            <td>Define la necesidad de guardar el resultado de la evaluación.</td>
+            <td>Lo usa <strong>EvaluateLoanInteractor</strong> y lo implementa <strong>LoanRepositoryGateway</strong>.</td>
+            <td><strong>Use Cases / Output</strong>. Puerto de salida hacia persistencia.</td>
+          </tr>
+          <tr>
+            <td><strong>RiskScoreOutput.java</strong></td>
+            <td>Define la necesidad de consultar un puntaje de riesgo externo.</td>
+            <td>Lo usa <strong>EvaluateLoanInteractor</strong> y lo implementa <strong>RiskScoreGateway</strong>.</td>
+            <td><strong>Use Cases / Output</strong>. Puerto de salida hacia servicio externo.</td>
+          </tr>
+          <tr>
+            <td><strong>EvaluateLoanInteractor.java</strong></td>
+            <td>Coordina el caso de uso: consulta riesgo, crea solicitud, evalúa reglas, guarda resultado y responde.</td>
+            <td>Implementa <strong>EvaluateLoanInput</strong> y usa <strong>RiskScoreOutput</strong> y <strong>LoanRepositoryOutput</strong>.</td>
+            <td><strong>Use Cases / Interactor</strong>. Flujo de aplicación.</td>
+          </tr>
+          <tr>
+            <td><strong>LoanController.java</strong></td>
+            <td>Recibe la solicitud HTTP para evaluar el préstamo.</td>
+            <td>Llama a <strong>EvaluateLoanInput</strong>.</td>
+            <td><strong>Adapters / Controllers</strong>. Adaptador de entrada.</td>
+          </tr>
+          <tr>
+            <td><strong>LoanPresenter.java</strong></td>
+            <td>Prepara una respuesta clara para el cliente, indicando aprobación, rechazo y razón.</td>
+            <td>Recibe el resultado del caso de uso.</td>
+            <td><strong>Adapters / Presenters</strong>. Adaptador de salida.</td>
+          </tr>
+          <tr>
+            <td><strong>LoanRepositoryGateway.java</strong></td>
+            <td>Implementa el guardado real de la evaluación en base de datos.</td>
+            <td>Implementa <strong>LoanRepositoryOutput</strong>.</td>
+            <td><strong>Frameworks / Database</strong>. Detalle técnico de persistencia.</td>
+          </tr>
+          <tr>
+            <td><strong>RiskScoreGateway.java</strong></td>
+            <td>Conecta con un proveedor externo de score o riesgo financiero.</td>
+            <td>Implementa <strong>RiskScoreOutput</strong>.</td>
+            <td><strong>Frameworks / External</strong>. Detalle técnico de integración externa.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>LoanApplication.java</h3>
+    <p>
+      En este pedazo de código podemos ver la entidad principal. Esta clase contiene reglas del negocio:
+      valida ingresos, monto solicitado y decide si la solicitud puede aprobarse.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Entities</strong>, ubicado en <strong>entities</strong>. Aquí viven reglas centrales y no debe haber dependencia de frameworks ni base de datos.</p>
+    <div class="code">public class LoanApplication {
+
+    private final String customerDocument;
+    private final double monthlyIncome;
+    private final double requestedAmount;
+    private String status;
+    private String reason;
+
+    private LoanApplication(String customerDocument,
+                            double monthlyIncome,
+                            double requestedAmount) {
+        if (customerDocument == null || customerDocument.isBlank()) {
+            throw new IllegalArgumentException("El documento del cliente es obligatorio");
+        }
+
+        if (monthlyIncome <= 0) {
+            throw new IllegalArgumentException("El ingreso mensual debe ser mayor que cero");
+        }
+
+        if (requestedAmount <= 0) {
+            throw new IllegalArgumentException("El monto solicitado debe ser mayor que cero");
+        }
+
+        this.customerDocument = customerDocument;
+        this.monthlyIncome = monthlyIncome;
+        this.requestedAmount = requestedAmount;
+        this.status = "PENDING";
+        this.reason = "Solicitud pendiente de evaluación";
+    }
+
+    public static LoanApplication create(String customerDocument,
+                                         double monthlyIncome,
+                                         double requestedAmount) {
+        return new LoanApplication(customerDocument, monthlyIncome, requestedAmount);
+    }
+
+    public void evaluate(int riskScore) {
+        double maxAllowedAmount = monthlyIncome * 8;
+
+        if (riskScore < 650) {
+            this.status = "REJECTED";
+            this.reason = "Puntaje de riesgo insuficiente";
+            return;
+        }
+
+        if (requestedAmount > maxAllowedAmount) {
+            this.status = "REJECTED";
+            this.reason = "El monto supera la capacidad de pago estimada";
+            return;
+        }
+
+        this.status = "APPROVED";
+        this.reason = "Solicitud aprobada";
+    }
+
+    public String getCustomerDocument() {
+        return customerDocument;
+    }
+
+    public double getRequestedAmount() {
+        return requestedAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>EvaluateLoanInput.java</h3>
+    <p>
+      Este archivo define el contrato de entrada para evaluar préstamos. El controller llama esta interfaz
+      sin conocer cómo está implementado el caso de uso.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Input</strong>, ubicado en <strong>usecases/input</strong>. Representa una acción disponible de la aplicación.</p>
+    <div class="code">public interface EvaluateLoanInput {
+
+    LoanResponse evaluateLoan(LoanRequest request);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>LoanRepositoryOutput.java</h3>
+    <p>
+      Este archivo define la salida hacia persistencia. El caso de uso necesita guardar la evaluación,
+      pero no debe saber si eso se hace con JPA, MongoDB, archivo o memoria.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Output</strong>, ubicado en <strong>usecases/output</strong>. Define un puerto de salida hacia almacenamiento.</p>
+    <div class="code">public interface LoanRepositoryOutput {
+
+    LoanApplication save(LoanApplication loanApplication);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>RiskScoreOutput.java</h3>
+    <p>
+      Este archivo define la salida hacia un proveedor externo de riesgo. El caso de uso necesita un score,
+      pero no debe depender del proveedor real.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Output</strong>, ubicado en <strong>usecases/output</strong>. Define un puerto de salida hacia un sistema externo.</p>
+    <div class="code">public interface RiskScoreOutput {
+
+    int getRiskScore(String customerDocument);
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>EvaluateLoanInteractor.java</h3>
+    <p>
+      Este es el caso de uso. Consulta el score de riesgo, crea la solicitud, ejecuta reglas de negocio,
+      guarda el resultado y devuelve una respuesta.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Cases / Interactor</strong>, ubicado en <strong>usecases/interactor</strong>. Coordina entidad, puerto externo y persistencia.</p>
+    <div class="code">public class EvaluateLoanInteractor implements EvaluateLoanInput {
+
+    private final RiskScoreOutput riskScoreOutput;
+    private final LoanRepositoryOutput loanRepositoryOutput;
+
+    public EvaluateLoanInteractor(RiskScoreOutput riskScoreOutput,
+                                  LoanRepositoryOutput loanRepositoryOutput) {
+        this.riskScoreOutput = riskScoreOutput;
+        this.loanRepositoryOutput = loanRepositoryOutput;
+    }
+
+    @Override
+    public LoanResponse evaluateLoan(LoanRequest request) {
+        int riskScore = riskScoreOutput.getRiskScore(request.customerDocument());
+
+        LoanApplication loanApplication = LoanApplication.create(
+            request.customerDocument(),
+            request.monthlyIncome(),
+            request.requestedAmount()
+        );
+
+        loanApplication.evaluate(riskScore);
+
+        LoanApplication savedLoan = loanRepositoryOutput.save(loanApplication);
+
+        return new LoanResponse(
+            savedLoan.getCustomerDocument(),
+            savedLoan.getRequestedAmount(),
+            savedLoan.getStatus(),
+            savedLoan.getReason()
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>LoanController.java</h3>
+    <p>
+      Este archivo recibe la petición externa. El controller no calcula capacidad de pago,
+      no decide aprobación y no consulta riesgo directamente. Solo adapta la entrada y llama el caso de uso.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Controllers</strong>, ubicado en <strong>adapters/controllers</strong>. Es el adaptador de entrada hacia el sistema.</p>
+    <div class="code">@RestController
+@RequestMapping("/loans")
+public class LoanController {
+
+    private final EvaluateLoanInput evaluateLoanInput;
+
+    public LoanController(EvaluateLoanInput evaluateLoanInput) {
+        this.evaluateLoanInput = evaluateLoanInput;
+    }
+
+    @PostMapping("/evaluate")
+    public ResponseEntity&lt;LoanResponse&gt; evaluate(@RequestBody LoanRequest request) {
+        LoanResponse response = evaluateLoanInput.evaluateLoan(request);
+
+        return ResponseEntity.ok(response);
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>LoanPresenter.java</h3>
+    <p>
+      Este archivo prepara la respuesta para que sea entendible. Por ejemplo,
+      puede convertir estados técnicos en mensajes claros para el usuario.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Adapters / Presenters</strong>, ubicado en <strong>adapters/presenters</strong>. Adapta la salida del caso de uso.</p>
+    <div class="code">public class LoanPresenter {
+
+    public LoanViewModel present(LoanResponse response) {
+        String message = response.status().equals("APPROVED")
+            ? "Tu préstamo fue aprobado"
+            : "Tu préstamo no fue aprobado: " + response.reason();
+
+        return new LoanViewModel(
+            response.customerDocument(),
+            response.requestedAmount(),
+            response.status(),
+            message
+        );
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>LoanRepositoryGateway.java</h3>
+    <p>
+      Este archivo implementa el guardado real en base de datos. Está afuera porque la base de datos
+      es detalle técnico, no regla del negocio.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Frameworks / Database</strong>, ubicado en <strong>frameworks/database</strong>. Implementa persistencia concreta.</p>
+    <div class="code">public class LoanRepositoryGateway implements LoanRepositoryOutput {
+
+    private final JpaLoanRepository jpaLoanRepository;
+
+    public LoanRepositoryGateway(JpaLoanRepository jpaLoanRepository) {
+        this.jpaLoanRepository = jpaLoanRepository;
+    }
+
+    @Override
+    public LoanApplication save(LoanApplication loanApplication) {
+        LoanEntity entity = new LoanEntity(
+            loanApplication.getCustomerDocument(),
+            loanApplication.getRequestedAmount(),
+            loanApplication.getStatus(),
+            loanApplication.getReason()
+        );
+
+        jpaLoanRepository.save(entity);
+
+        return loanApplication;
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>RiskScoreGateway.java</h3>
+    <p>
+      Este archivo conecta con un proveedor externo de score de riesgo. El caso de uso no sabe
+      si se consulta una API, un servicio interno o una librería. Solo usa el contrato.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Frameworks / External</strong>, ubicado en <strong>frameworks/external</strong>. Implementa integración con sistemas externos.</p>
+    <div class="code">public class RiskScoreGateway implements RiskScoreOutput {
+
+    private final RiskScoreClient riskScoreClient;
+
+    public RiskScoreGateway(RiskScoreClient riskScoreClient) {
+        this.riskScoreClient = riskScoreClient;
+    }
+
+    @Override
+    public int getRiskScore(String customerDocument) {
+        RiskScoreResponse response = riskScoreClient.findScore(customerDocument);
+
+        return response.score();
+    }
+}</div>
+  </div>
+
+  <div class="slide-note">
+    <strong>Idea clave del ejemplo:</strong> la decisión de aprobación vive en la entidad y el caso de uso coordina.
+    La base de datos y el proveedor de riesgo son detalles externos.
+  </div>
+</section>
+
+
+
+<section id="testing">
+  <h2 class="section-title">11. Testing en Clean Architecture</h2>
+
+  <div class="grid">
+    <div class="card quarter">
+      <span class="badge green">Entities</span>
+      <p>
+        Gente, acá se prueban las reglas más importantes del negocio:
+        validaciones, estados, decisiones y restricciones.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge orange">Use Cases</span>
+      <p>
+        Se prueba el flujo de aplicación usando repositorios simulados o fakes.
+        Así no toca levantar base de datos para validar una regla.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge purple">Adapters</span>
+      <p>
+        Se revisa que controllers, presenters y gateways traduzcan bien datos entre el mundo externo y el caso de uso.
+      </p>
+    </div>
+    <div class="card quarter">
+      <span class="badge red">Frameworks</span>
+      <p>
+        Se prueban integraciones reales con base de datos, APIs externas o frameworks cuando ya toca validar infraestructura.
+      </p>
+    </div>
+  </div>
+
+  <div class="file-block">
+    <h3>Ejemplo de prueba: LoanApplicationTest.java</h3>
+    <p>
+      En este pedazo de código podemos ver una prueba sobre la entidad.
+      No levanta Spring, no toca base de datos y no consulta servicios externos. Va directo a la regla.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Entity Unit Test</strong>, ubicado en <strong>tests/entities</strong>. Valida reglas centrales del negocio sin infraestructura.</p>
+    <div class="code">import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class LoanApplicationTest {
+
+    @Test
+    void shouldRejectLoanWhenRiskScoreIsLow() {
+        LoanApplication loan = LoanApplication.create(
+            "100200300",
+            3000000,
+            5000000
+        );
+
+        loan.evaluate(580);
+
+        assertEquals("REJECTED", loan.getStatus());
+        assertEquals("Puntaje de riesgo insuficiente", loan.getReason());
+    }
+}</div>
+  </div>
+
+  <div class="file-block">
+    <h3>Ejemplo de prueba: RegisterUserInteractorTest.java</h3>
+    <p>
+      Este ejemplo prueba un caso de uso. Parce, acá no necesitamos una base de datos real:
+      usamos un repositorio falso para validar el flujo.
+    </p>
+    <p><strong>Ubicación en la arquitectura:</strong> <strong>Use Case Test</strong>, ubicado en <strong>tests/usecases</strong>. Valida la coordinación del caso de uso con dependencias simuladas.</p>
+    <div class="code">import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class RegisterUserInteractorTest {
+
+    @Test
+    void shouldRejectUserWhenEmailAlreadyExists() {
+        UserRepositoryOutput fakeRepository = new FakeUserRepository(true);
+        RegisterUserInput registerUser = new RegisterUserInteractor(fakeRepository);
+
+        RegisterUserRequest request = new RegisterUserRequest(
+            "Ana Gómez",
+            "ana@example.com",
+            "password123"
+        );
+
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> registerUser.registerUser(request)
+        );
+    }
+}</div>
+  </div>
+
+  <div class="slide-note">
+    <strong>Idea clave:</strong> Clean Architecture facilita probar desde adentro hacia afuera:
+    primero entidades, luego casos de uso, después adaptadores y por último infraestructura.
+  </div>
+</section>
+
+<section id="ventajas">
+  <h2 class="section-title">12. Ventajas y riesgos</h2>
+
+  <div class="grid">
+    <div class="card half">
+      <span class="badge green">Ventajas</span>
+      <ul class="pros">
+        <li><strong>Negocio protegido:</strong> las reglas importantes no dependen del framework.</li>
+        <li><strong>Testing más limpio:</strong> se pueden probar entidades y casos de uso sin infraestructura.</li>
+        <li><strong>Menor acoplamiento:</strong> base de datos, web y APIs externas quedan como detalles.</li>
+        <li><strong>Mantenibilidad:</strong> el equipo entiende mejor dónde vive cada responsabilidad.</li>
+        <li><strong>Flexibilidad tecnológica:</strong> cambiar framework o persistencia impacta menos el centro.</li>
+      </ul>
+    </div>
+
+    <div class="card half">
+      <span class="badge red">Riesgos</span>
+      <ul class="cons">
+        <li><strong>Más estructura:</strong> aparecen más interfaces, carpetas y clases.</li>
+        <li><strong>Curva de aprendizaje:</strong> si el equipo no entiende la regla de dependencia, puede enredarse.</li>
+        <li><strong>Sobrearquitectura:</strong> para CRUD pequeños puede ser demasiado.</li>
+        <li><strong>Falsa limpieza:</strong> crear carpetas bonitas no garantiza buen diseño.</li>
+        <li><strong>Mapeos excesivos:</strong> DTOs, entidades y modelos mal manejados pueden volver el código pesado.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="meme">
+    <div class="face">🧼🧱</div>
+    <p>
+      <strong>Meme:</strong> “le puse carpetas entities, usecases y adapters, entonces ya es Clean”.
+      No, gente. Si las dependencias siguen apuntando para cualquier lado, eso solo es desorden con nombres bonitos.
+    </p>
+  </div>
+</section>
+
+<section id="cuando-usar">
+  <h2 class="section-title">13. ¿Cuándo usar Clean Architecture?</h2>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge green">Úsela cuando...</span>
+      <ul class="pros">
+        <li>El sistema tiene reglas de negocio importantes.</li>
+        <li>Se espera que el proyecto crezca y sea mantenido por varios desarrolladores.</li>
+        <li>Se necesita probar lógica sin depender de base de datos, servidor o framework.</li>
+        <li>Hay integraciones externas que pueden cambiar con el tiempo.</li>
+        <li>El equipo quiere separar dominio, casos de uso, adaptadores e infraestructura.</li>
+        <li>Se trabaja en sistemas empresariales, financieros, académicos, logísticos o de salud.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="no-usar">
+  <h2 class="section-title">14. ¿Cuándo NO usar Clean Architecture?</h2>
+
+  <div class="grid">
+    <div class="card half">
+      <span class="badge red">No siempre hace falta</span>
+      <p>
+        Gente, Clean Architecture no es para meterla a la fuerza en todo.
+        Si la aplicación es muy pequeña o solo tiene CRUD sin reglas relevantes,
+        puede terminar siendo más ceremonia que solución.
+      </p>
+      <ul class="cons">
+        <li>Aplicaciones demasiado pequeñas o prototipos rápidos.</li>
+        <li>CRUD simple sin reglas de negocio importantes.</li>
+        <li>Equipos que todavía no entienden separación de responsabilidades.</li>
+        <li>Proyectos donde el costo de estructura supera el beneficio.</li>
+        <li>Casos donde se necesita entregar una prueba de concepto muy rápida.</li>
+      </ul>
+    </div>
+
+    <div class="card half">
+      <span class="badge orange">Señales de alerta</span>
+      <ul>
+        <li>Hay interfaces para todo, aunque solo exista una implementación trivial.</li>
+        <li>El equipo copia la estructura sin entender la regla de dependencia.</li>
+        <li>El controller sigue teniendo reglas de negocio.</li>
+        <li>La entidad depende de JPA, Spring, HTTP o JSON.</li>
+        <li>Los casos de uso parecen servicios gigantes con muchas responsabilidades.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide-note">
+    <strong>Idea clave:</strong> Clean Architecture debe resolver un problema de mantenibilidad,
+    pruebas y acoplamiento. Si no hay ese problema, puede ser demasiado para el caso.
+  </div>
+</section>
+
+<section id="comparacion">
+  <h2 class="section-title">15. Comparación: Clean vs Hexagonal vs Capas</h2>
+
+  <div class="card table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Criterio</th>
+          <th>Arquitectura por capas</th>
+          <th>Arquitectura Hexagonal</th>
+          <th>Clean Architecture</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Centro del diseño</td>
+          <td>Capas técnicas: controller, service, repository.</td>
+          <td>Dominio y puertos/adaptadores.</td>
+          <td>Entidades, casos de uso y regla de dependencia.</td>
+        </tr>
+        <tr>
+          <td>Dependencias</td>
+          <td>Pueden ir de arriba hacia abajo y acoplarse al framework.</td>
+          <td>El dominio se comunica mediante puertos.</td>
+          <td>Las dependencias apuntan hacia el centro.</td>
+        </tr>
+        <tr>
+          <td>Dominio</td>
+          <td>A veces queda mezclado en servicios.</td>
+          <td>Queda protegido en el centro.</td>
+          <td>Queda como capa interna junto a entidades y reglas centrales.</td>
+        </tr>
+        <tr>
+          <td>Testing</td>
+          <td>Puede requerir más infraestructura.</td>
+          <td>Permite probar dominio y casos de uso con adaptadores simulados.</td>
+          <td>Facilita pruebas por capas internas y externas.</td>
+        </tr>
+        <tr>
+          <td>Uso recomendado</td>
+          <td>Aplicaciones sencillas o medianas.</td>
+          <td>Sistemas donde se quieren aislar entradas y salidas.</td>
+          <td>Sistemas con reglas de negocio fuertes y necesidad de mantenibilidad.</td>
+        </tr>
+        <tr>
+          <td>Riesgo común</td>
+          <td>Services gigantes llenos de lógica.</td>
+          <td>Crear muchos puertos sin criterio.</td>
+          <td>Sobrearquitectura y exceso de mapeos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="relacion">
+  <h2 class="section-title">16. Relación con DDD, Testing y Microservicios</h2>
+
+  <div class="grid">
+    <div class="card third">
+      <span class="badge purple">DDD</span>
+      <p>
+        Clean Architecture se lleva muy bien con DDD porque ayuda a proteger el dominio.
+        Las entidades y reglas importantes pueden vivir en el centro sin depender de infraestructura.
+      </p>
+    </div>
+
+    <div class="card third">
+      <span class="badge green">Testing</span>
+      <p>
+        Como el negocio queda aislado, se pueden crear pruebas rápidas y claras.
+        Primero se validan reglas, luego casos de uso y después integraciones externas.
+      </p>
+    </div>
+
+    <div class="card third">
+      <span class="badge orange">Microservicios</span>
+      <p>
+        Un microservicio puede estar construido internamente con Clean Architecture.
+        Microservicios separa el sistema en servicios; Clean ordena el interior de cada servicio.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="cierre">
+  <h2 class="section-title">17. Cierre</h2>
+
+  <div class="card">
+    <p>
+      Gente, si se llevan una sola idea, que sea esta:
+      <strong>Clean Architecture protege las reglas importantes del negocio y organiza las dependencias hacia el centro.</strong>
+    </p>
+    <p>
+      El controller, la base de datos, el framework y las APIs externas son importantes,
+      claro que sí, pero no deberían mandar sobre el negocio. Son detalles externos.
+    </p>
+    <p>
+      Cuando Clean Architecture se aplica bien, el sistema queda más fácil de probar,
+      mantener, evolucionar y explicar. Cuando se aplica mal, solo quedan muchas carpetas,
+      muchas interfaces y el mismo desorden de siempre.
+    </p>
+  </div>
+</section>
+
+</main>
+<div class="footer"></div>
+</body>
+</html>

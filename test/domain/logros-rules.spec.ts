@@ -3,8 +3,8 @@
  * Demuestra que las reglas de negocio son testeables de forma aislada,
  * sin necesidad de Firebase ni de ninguna capa externa.
  */
-import { LogrosRules } from '../../src/domain/rules/logros.rules';
-import { LogroModel } from '../../src/domain/models/logro.model';
+import { LogrosRules } from '../../src/entities/logros.rules';
+import { LogroModel } from '../../src/entities/logro.model';
 
 describe('LogrosRules (Dominio)', () => {
   const logros = [

@@ -15,8 +15,8 @@ import {
   USER_REPOSITORY,
   MISION_REPOSITORY,
   LOGRO_REPOSITORY,
-} from '../../domain/interfaces/repositories.interface';
-import { LogrosRules } from '../../domain/rules/logros.rules';
+} from '../../usecases/output/repositories.output';
+import { LogrosRules } from '../../entities/logros.rules';
 
 @Injectable()
 export class UserProgressService {

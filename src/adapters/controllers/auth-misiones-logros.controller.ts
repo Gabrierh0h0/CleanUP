@@ -7,11 +7,11 @@ import {
   Controller, Post, Get, Body, Req,
   UseGuards, UsePipes, ValidationPipe,
 } from '@nestjs/common';
-import { AuthService }    from '../../application/services/auth.service';
-import { MisionesService } from '../../application/services/misiones.service';
-import { LogrosService }   from '../../application/services/logros.service';
-import { FirebaseAuthGuard } from '../../infrastructure/guards/firebase-auth.guard';
-import { LoginDto, RegisterDto } from '../dto/index.dto';
+import { AuthService }    from '../../usecases/interactor/auth.service';
+import { MisionesService } from '../../usecases/interactor/misiones.service';
+import { LogrosService }   from '../../usecases/interactor/logros.service';
+import { FirebaseAuthGuard } from '../../frameworks/web/guards/firebase-auth.guard';
+import { LoginDto, RegisterDto } from './dto/index.dto';
 
 /* ─── Auth ─────────────────────────────────────────────────────── */
 

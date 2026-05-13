@@ -5,11 +5,11 @@ import {
   Controller, Post, Get, Body, Req,
   UseGuards, UsePipes, ValidationPipe,
 } from '@nestjs/common';
-import { UserProgressService } from '../../application/services/user-progress.service';
-import { QrService }           from '../../application/services/qr.service';
-import { UiConfigService }     from '../../application/services/ui-config.service';
-import { FirebaseAuthGuard }   from '../../infrastructure/guards/firebase-auth.guard';
-import { CompleteMissionDto, ValidateQrDto } from '../dto/index.dto';
+import { UserProgressService } from '../../usecases/interactor/user-progress.service';
+import { QrService }           from '../../usecases/interactor/qr.service';
+import { UiConfigService }     from '../../usecases/interactor/ui-config.service';
+import { FirebaseAuthGuard }   from '../../frameworks/web/guards/firebase-auth.guard';
+import { CompleteMissionDto, ValidateQrDto } from './dto/index.dto';
 
 /* ─── Progress ──────────────────────────────────────────────────── */
 

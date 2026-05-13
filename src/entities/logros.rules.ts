@@ -2,7 +2,7 @@
  * CAPA DE DOMINIO — Reglas de Negocio: Logros
  * Lógica pura sin dependencias externas. Fácilmente testeable.
  */
-import { LogroModel } from '../models/logro.model';
+import { LogroModel } from './logro.model';
 
 export class LogrosRules {
   /**

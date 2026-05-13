@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { FirebaseService } from '../../infrastructure/firebase/firebase.service';
-import { IUserRepository, USER_REPOSITORY } from '../../domain/interfaces/repositories.interface';
-import { UserModel } from '../../domain/models/user.model';
+import { FirebaseService } from '../../frameworks/database/firebase/firebase.service';
+import { IUserRepository, USER_REPOSITORY } from '../../usecases/output/repositories.output';
+import { UserModel } from '../../entities/user.model';
 
 interface FirebaseSignInResponse {
   idToken: string;

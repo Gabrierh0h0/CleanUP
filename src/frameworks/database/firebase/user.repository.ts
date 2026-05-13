@@ -4,8 +4,8 @@
  */
 import { Injectable } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
-import { IUserRepository } from '../../domain/interfaces/repositories.interface';
-import { UserModel } from '../../domain/models/user.model';
+import { IUserRepository } from '../../../usecases/output/repositories.output';
+import { UserModel } from '../../../entities/user.model';
 
 @Injectable()
 export class UserRepository implements IUserRepository {

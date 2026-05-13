@@ -16,21 +16,21 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 // ── Infraestructura ──────────────────────────────────────────────
-import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { InfrastructureModule } from './frameworks/infrastructure.module';
 
 // ── Capa de Aplicación (servicios / casos de uso) ────────────────
-import { AuthService }         from './application/services/auth.service';
-import { MisionesService }     from './application/services/misiones.service';
-import { LogrosService }       from './application/services/logros.service';
-import { UserProgressService } from './application/services/user-progress.service';
-import { QrService }           from './application/services/qr.service';
-import { UiConfigService }     from './application/services/ui-config.service';
+import { AuthService }         from './usecases/interactor/auth.service';
+import { MisionesService }     from './usecases/interactor/misiones.service';
+import { LogrosService }       from './usecases/interactor/logros.service';
+import { UserProgressService } from './usecases/interactor/user-progress.service';
+import { QrService }           from './usecases/interactor/qr.service';
+import { UiConfigService }     from './usecases/interactor/ui-config.service';
 
 // ── Capa de Presentación (controllers) ──────────────────────────
 import { AuthController, MisionesController, LogrosController }
-  from './presentation/controllers/auth-misiones-logros.controller';
+  from './adapters/controllers/auth-misiones-logros.controller';
 import { UserProgressController, QrController, UiConfigController }
-  from './presentation/controllers/progress-qr-ui.controller';
+  from './adapters/controllers/progress-qr-ui.controller';
 
 @Module({
   imports: [

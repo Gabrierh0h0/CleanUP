@@ -5,15 +5,15 @@
  * los inyecte sin importar detalles de Firebase (Principio D de SOLID).
  */
 import { Module } from '@nestjs/common';
-import { FirebaseService } from './firebase/firebase.service';
-import { UserRepository } from './firebase/user.repository';
-import { MisionRepository, LogroRepository } from './firebase/mision-logro.repository';
-import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
+import { FirebaseService } from './database/firebase/firebase.service';
+import { UserRepository } from './database/firebase/user.repository';
+import { MisionRepository, LogroRepository } from './database/firebase/mision-logro.repository';
+import { FirebaseAuthGuard } from './web/guards/firebase-auth.guard';
 import {
   USER_REPOSITORY,
   MISION_REPOSITORY,
   LOGRO_REPOSITORY,
-} from '../domain/interfaces/repositories.interface';
+} from '../usecases/output/repositories.output';
 
 @Module({
   providers: [
