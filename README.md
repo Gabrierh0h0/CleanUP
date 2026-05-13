@@ -65,4 +65,4 @@ Este proyecto fue planteado como una propuesta de solución tecnológica para me
       © Equipo de desarrollo EIAR.
     </p>
   </samp>
-</footer># Eiar-monolitico
+</footer>
